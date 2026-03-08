@@ -1,0 +1,33 @@
+services:
+  # ============================================
+  # SFTP Source Server (Port 2222)
+  # ============================================
+  sftp-source:
+    image: atmoz/sftp
+    container_name: sftp_source_server
+    ports:
+      - "2222:22"
+    volumes:
+      # Mounting folder lokal agar kita bisa menaruh gambar dari Windows/Mac/Linux ke Docker
+      - ./source_data/claim_evidence:/home/tester/claim_evidence
+      - ./source_data/archive:/home/tester/archive
+    # Format: user:pass:uid:gid:dir1,dir2
+    command: tester:password123:::claim_evidence,archive
+    restart: always
+
+  # ============================================
+  # SFTP Target Server (Port 2223)
+  # ============================================
+  sftp-target:
+    image: atmoz/sftp
+    container_name: sftp_target_server
+    ports:
+      - "2223:22"
+    volumes:
+      # Folder untuk menyimpan file yang dicopy dari source
+      - ./target_data/claim_evidence:/home/tester/claim_evidence
+      # Additional folders jika needed
+      - ./target_data/archive:/home/tester/archive
+    # Format: user:pass:uid:gid:dir1,dir2
+    command: tester:password123:::claim_evidence,archive
+    restart: always
